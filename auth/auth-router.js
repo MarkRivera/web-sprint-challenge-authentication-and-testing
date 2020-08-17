@@ -16,7 +16,7 @@ router.post("/register", async (req, res) => {
     req.body.password = hash;
     const userId = await db("users").insert(req.body);
     const newUser = await db("users").where({ id: userId[0] }).first();
-    res.status(200).json(newUser);
+    res.status(201).json(newUser);
   }
 });
 
