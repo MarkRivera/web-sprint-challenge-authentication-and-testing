@@ -37,3 +37,27 @@ describe("POST /api/auth/login", () => {
       .expect(400);
   });
 });
+
+// Other Endpoints:
+
+describe("GET /api/jokes/", () => {
+  it("Returns 400(Bad Request) when no token is given", () => {
+    return request(server)
+      .get("/api/jokes/")
+      .set("authorization", "Bearer")
+      .expect(400);
+  });
+
+  it("Logs in user and returns jokes", () => {
+    return request(server)
+      .post("/api/auth/login")
+      .send({ username: "Lucian", password: "Senna" })
+      .expect(200)
+      .then((response) => {
+        return request(server)
+          .get("/api/jokes/")
+          .set("authorization", `Bearer ${response.body.token}`)
+          .expect(200);
+      });
+  });
+});
