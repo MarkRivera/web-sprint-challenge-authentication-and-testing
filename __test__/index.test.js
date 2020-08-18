@@ -82,14 +82,24 @@ describe("GET /api/jokes/ (valid user)", () => {
   it("Token should be in response", () => {
     expect(response.body.token).toBeDefined();
   });
+});
 
-  it("Gets dad jokes", async () => {
-    let dadJokes = await request(server)
+describe("GET /api/jokes/", () => {
+  beforeAll(async () => {
+    response = await request(server)
+      .post("/api/auth/login")
+      .send({ username: "Lucian", password: "Senna" });
+    dadJokes = await request(server)
       .get("/api/jokes/")
       .set("authorization", `Bearer ${response.body.token}`);
+  });
 
+  it("Dad jokes should exist", () => {
+    expect(dadJokes.body).toBeDefined();
+  });
+
+  it("returns an array of JSON objects", () => {
     expect(dadJokes.type).toBe("application/json");
-    expect(dadJokes).toBeDefined();
   });
 });
 
