@@ -7,34 +7,57 @@ beforeAll(async () => {
 });
 
 describe("POST /api/auth/register", () => {
+  beforeAll(async () => {
+    response = await request(server).post("/api/auth/register").send({
+      username: "Lucian",
+      password: "Senna",
+    });
+  });
+
   it("Receives status code 201(Created) from endpoint", () => {
-    return request(server)
-      .post("/api/auth/register")
-      .send({ username: "Lucian", password: "Senna" })
-      .expect(201);
+    expect(response.statusCode).toBe(201);
+  });
+
+  it("Receives JSON object", () => {
+    expect(response.type).toBe("application/json");
+  });
+});
+
+describe("POST /api/auth/register", () => {
+  beforeAll(async () => {
+    response = await request(server).post("/api/auth/register").send({
+      username: "Lucian",
+      password: "Senna",
+    });
   });
 
   it("Receives status code 400(Bad Request) when user already exists", () => {
-    return request(server)
-      .post("/api/auth/register")
-      .send({ username: "Lucian", password: "Senna" })
-      .expect(400);
+    expect(response.statusCode).toBe(400);
   });
 });
 
 describe("POST /api/auth/login", () => {
-  it("returns 200(OK) when user logs in", () => {
-    return request(server)
+  beforeAll(async () => {
+    response = await request(server)
       .post("/api/auth/login")
-      .send({ username: "Lucian", password: "Senna" })
-      .expect(200);
+      .send({ username: "Lucian", password: "Senna" });
+  });
+
+  it("returns 200(OK) when user logs in", () => {
+    expect(response.statusCode).toBe(200);
+  });
+});
+
+describe("POST /api/auth/login  (Invalid Credentials)", () => {
+  beforeAll(async () => {
+    response = await request(server).post("/api/auth/login").send({
+      username: "Lucian",
+      password: "12345",
+    });
   });
 
   it("returns 400(Bad Request) when user info is wrong", () => {
-    return request(server)
-      .post("/api/auth/login")
-      .send({ username: "Lucian", password: "1234" })
-      .expect(400);
+    expect(response.statusCode).toBe(400);
   });
 });
 
