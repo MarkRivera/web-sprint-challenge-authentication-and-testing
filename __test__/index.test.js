@@ -104,10 +104,17 @@ describe("GET /api/jokes/", () => {
 });
 
 describe("GET /api/jokes/ (invalid user)", () => {
-  it("Returns 400(Bad Request) when no token is given", () => {
-    return request(server)
+  beforeAll(async () => {
+    response = await request(server)
       .get("/api/jokes/")
-      .set("authorization", "Bearer ")
-      .expect(400);
+      .set("authorization", "Bearer ");
+  });
+
+  it("Returns 400(Bad Request) when no token is given", () => {
+    expect(response.statusCode).toBe(400);
+  });
+
+  it("should return you that your token is missing", () => {
+    expect(response.body).toEqual({ msg: "Token is missing" });
   });
 });
