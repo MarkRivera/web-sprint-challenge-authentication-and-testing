@@ -40,24 +40,41 @@ describe("POST /api/auth/login", () => {
 
 // Other Endpoints:
 
-describe("GET /api/jokes/", () => {
+describe("GET /api/jokes/ (valid user)", () => {
+  beforeAll(async () => {
+    response = await request(server)
+      .post("/api/auth/login")
+      .set("authorization", "Bearer")
+      .send({ username: "Lucian", password: "Senna" });
+  });
+
+  it("Returns Status 200 OK", () => {
+    expect(response.statusCode).toBe(200);
+  });
+
+  it("Returns JSON object", () => {
+    expect(response.type).toBe("application/json");
+  });
+
+  it("Token should be in response", () => {
+    expect(response.body.token).toBeDefined();
+  });
+
+  it("Gets dad jokes", async () => {
+    let dadJokes = await request(server)
+      .get("/api/jokes/")
+      .set("authorization", `Bearer ${response.body.token}`);
+
+    expect(dadJokes.type).toBe("application/json");
+    expect(dadJokes).toBeDefined();
+  });
+});
+
+describe("GET /api/jokes/ (invalid user)", () => {
   it("Returns 400(Bad Request) when no token is given", () => {
     return request(server)
       .get("/api/jokes/")
-      .set("authorization", "Bearer")
+      .set("authorization", "Bearer ")
       .expect(400);
-  });
-
-  it("Logs in user and returns jokes", () => {
-    return request(server)
-      .post("/api/auth/login")
-      .send({ username: "Lucian", password: "Senna" })
-      .expect(200)
-      .then((response) => {
-        return request(server)
-          .get("/api/jokes/")
-          .set("authorization", `Bearer ${response.body.token}`)
-          .expect(200);
-      });
   });
 });
