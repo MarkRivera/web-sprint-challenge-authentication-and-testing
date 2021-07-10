@@ -1,8 +1,21 @@
-/* 
-  complete the middleware code to check if the user is logged in
-  before granting access to the next middleware/route handler
-*/
+const jwt = require("jsonwebtoken");
+const secrets = require("../config/secrets");
 
 module.exports = (req, res, next) => {
-  res.status(401).json({ you: 'shall not pass!' });
+  const [authType, token] = req.headers.authorization.split(" ");
+  const secret = secrets.jwtSecret;
+
+  if (token) {
+    jwt.verify(token, secret, (err, decodedToken) => {
+      if (err) {
+        console.error(err);
+        res.status(400).json({ msg: "Invalid token!" });
+      } else {
+        req.decodedToken = decodedToken;
+        next();
+      }
+    });
+  } else {
+    res.status(400).json({ msg: "Token is missing" });
+  }
 };
